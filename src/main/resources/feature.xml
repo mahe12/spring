@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
+	<feature name="spring" version="3.0.4.RELEASE"  description="price and promotion rest interface" resolver="(obr)">
+		
+	<bundle>file:///C:/Users/Dinesh/.m2/repository/org/springframework/boot/spring-boot-starter-web/1.4.1.RELEASE/spring-boot-starter-web-1.4.1.RELEASE.jar</bundle>
+<bundle>file:///C:/Users/Dinesh/.m2/repository/org/springframework/boot/spring-boot-starter-web-services/1.4.1.RELEASE/spring-boot-starter-web-services-1.4.1.RELEASE.jar</bundle>
+<bundle>file:///H:/HCL/AT_and_T/apache_karaf_task/git_download_priceapi/priceApi/karafbootrest/target/karafbootrest-0.0.1-SNAPSHOT.jar</bundle>
+
+    </feature>
+	
+</features>
