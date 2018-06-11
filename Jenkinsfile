@@ -17,13 +17,21 @@ stage('gitCheckout') {
 stage('Build'){
         sh "mvn package"
     }
-  stage('Sonar'){
+  stage('Junit'){
         try {
             sh "mvn test"
         } catch(error){
             echo "The sonar server could not be reached ${error}"
         }
      }
+  stage('Sonar'){
+        try {
+            sh "mvn sonar:sonar"
+        } catch(error){
+            echo "The sonar server could not be reached ${error}"
+        }
+     }
+
     stage("Prune_deleteUnusedImages"){
         imagePrune(CONTAINER_NAME)
     }
