@@ -17,9 +17,13 @@ stage('Checkout') {
 stage('Build'){
         sh "mvn package"
     }
-stage('Build'){
-        sh "mvn test"
-    }
+  stage('Sonar'){
+        try {
+            sh "mvn test"
+        } catch(error){
+            echo "The sonar server could not be reached ${error}"
+        }
+     }
     stage("Image Prune"){
         imagePrune(CONTAINER_NAME)
     }
