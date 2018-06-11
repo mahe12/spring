@@ -15,3 +15,4 @@ stage('Build'){
 stage('Build'){
         sh "mvn test"
     }
+}
