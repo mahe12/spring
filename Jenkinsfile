@@ -12,7 +12,7 @@ stage('Checkout') {
 stage('Build'){
         sh "mvn package"
     }
-stage('Build'){
+stage('SonarTest'){
         sh "mvn test"
     }
 }
