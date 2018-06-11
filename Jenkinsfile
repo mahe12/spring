@@ -1,3 +1,10 @@
+node {
+
+    stage('Initialize'){
+        def dockerHome = tool 'myDocker'
+        def mavenHome  = tool 'myMaven'
+        env.PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
+    }
 stage('Checkout') {
         checkout scm
     }
@@ -5,6 +12,6 @@ stage('Checkout') {
 stage('Build'){
         sh "mvn package"
     }
-stage('Test Maven'){
+stage('Build'){
         sh "mvn test"
     }
