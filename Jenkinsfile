@@ -5,12 +5,12 @@ def HTTP_PORT="8085"
 
 node {
 
-    stage('Initialize'){
+    stage('declareEnvVariables'){
         def dockerHome = tool 'myDocker'
         def mavenHome  = tool 'myMaven'
         env.PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
     }
-stage('Checkout') {
+stage('gitCheckout') {
         checkout scm
     }
 
@@ -24,14 +24,14 @@ stage('Build'){
             echo "The sonar server could not be reached ${error}"
         }
      }
-    stage("Image Prune"){
+    stage("Prune_deleteUnusedImages"){
         imagePrune(CONTAINER_NAME)
     }
 
-    stage('Image Build'){
+    stage('buildDockerImage'){
         imageBuild(CONTAINER_NAME, CONTAINER_TAG)
     }
-    stage('Push to Docker Registry'){
+    stage('pushtoDockerRegistry'){
         withCredentials([usernamePassword(credentialsId: 'dockerHubAccount', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
             pushToImage(CONTAINER_NAME, CONTAINER_TAG, USERNAME, PASSWORD)
         }
