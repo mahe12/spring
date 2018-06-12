@@ -21,7 +21,7 @@ stage('Build'){
         try {
             sh "mvn test"
         } catch(error){
-            echo "The sonar server could not be reached ${error}"
+            echo "The Maven can not perform Junit ${error}"
         }
      }
   stage('Sonar'){
