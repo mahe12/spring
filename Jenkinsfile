@@ -132,7 +132,8 @@ stage('Build')
                             if (env.APPROVE_PROD == 'YES')
 				    {
                                 env.DPROD = true
-                            	    } else 
+				    }
+			             else 
 				    {
                                 env.DPROD = false
                             	    }
@@ -193,3 +194,4 @@ def dipProd(containerName, tag, dockerHubUser, httpPort){
     sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
     echo "Application started on port: ${httpPort} (http)"
 }
+    }
