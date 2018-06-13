@@ -22,6 +22,7 @@ stage('Build'){
             sh "mvn test"
         } catch(error){
             echo "The Maven can not perform Junit ${error}"
+
         }
      }
   stage('Sonar'){
@@ -49,6 +50,7 @@ stage('Build'){
         runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT)
     }
 
+    /*
     stage('Deploy approval to QA'){
     input "Deploy to QA?"
     }
@@ -79,7 +81,7 @@ stage('Build'){
         echo "Application started on port: ${httpPort} (http)"
         }
     }
-
+*/
 }
     def imagePrune(containerName){
     try {
