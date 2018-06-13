@@ -78,13 +78,12 @@ stage('Build')
 					    {
                                             dipQA(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8086)
                                             }
-					    
-					    
-					    
+					    	    
                                 env.DPROD = true
                             	    } else 
 				    {
                                 env.DPROD = false
+			        echo "QA test Faild"
                                     }
                             }
                           } catch (error) 
@@ -107,10 +106,14 @@ stage('Build')
                                 parameters: [choice(name: 'APPROVE_UAT', choices: 'YES\nNO', description: 'Deploy to UAT?')]
                             if (env.APPROVE_UAT == 'YES')
 				    {
+				    stage('deploy to UAT'){
+        			    	dipUAT(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8087)
+        						}
                                 env.DPROD = true
                             	    } else 
 				    {
                                 env.DPROD = false
+			        echo 'UAT faild"
                             	    }
                             }
                     	  } catch (error) 
@@ -120,12 +123,7 @@ stage('Build')
                     	}
 		      }
 	    
-	    
-	    
-	stage('deploy to UAT'){
-        dipUAT(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8087)
-        			}
-    }
+          }
     stage('approvalOfProd'){
     input "Deploy to Prod?"
     }
@@ -139,11 +137,16 @@ stage('Build')
                                 parameters: [choice(name: 'APPROVE_PROD', choices: 'YES\nNO', description: 'Deploy from STAGING to PRODUCTION?')]
                             if (env.APPROVE_PROD == 'YES')
 				    {
-                                env.DPROD = true
+                                stage('deploy to Prod')
+					    {
+        				dipProd(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8088)
+        				    }
+					    env.DPROD = true
 				    }
 			             else 
 				    {
                                 env.DPROD = false
+				echo "Rejected to Deploy by DEVOPS eng"
                             	    }
                              }
                     	   } catch (error) 
@@ -152,10 +155,8 @@ stage('Build')
                         echo 'Timeout has been reached! Deploy to PRODUCTION automatically activated'
                            }
 		       }
-    stage('deploy to Prod'){
-        dipProd(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8088)
-        }
-    }
+    
+	    }
 }	
 	
 
