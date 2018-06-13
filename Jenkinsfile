@@ -1,4 +1,3 @@
-//@Library('jenkins-shared-library')_
 def CONTAINER_NAME="jenkins-pipeline"
 def CONTAINER_TAG="latest"
 def DOCKER_HUB_USER="bathinapullarao"
@@ -54,6 +53,24 @@ stage('Build'){
     input "Deploy to QA?"
     }
     node {
+	    slackSend (channel: "#jenkins_notification", color: '#4286f4', message: "Deploy Approval: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.JOB_DISPLAY_URL})")
+                script {
+                    try {
+                        timeout(time:30, unit:'MINUTES') {
+                            env.APPROVE_PROD = input message: 'Deploy to Production', ok: 'Continue',
+                                parameters: [choice(name: 'APPROVE_PROD', choices: 'YES\nNO', description: 'Deploy from STAGING to PRODUCTION?')]
+                            if (env.APPROVE_PROD == 'YES'){
+                                env.DPROD = true
+                            } else {
+                                env.DPROD = false
+                            }
+                        }
+                    } catch (error) {
+                        env.DPROD = true
+                        echo 'Timeout has been reached! Deploy to PRODUCTION automatically activated'
+                    }
+                }
+	    
     stage('deploy to QA'){
         dipQA(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8086)
         }
@@ -75,30 +92,8 @@ stage('Build'){
         }
     }
 	
-	slackSend (channel: "#jenkins_notification", color: '#4286f4', message: "Deploy Approval: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.JOB_DISPLAY_URL})")
-                script {
-                    try {
-                        timeout(time:30, unit:'MINUTES') {
-                            env.APPROVE_PROD = input message: 'Deploy to Production', ok: 'Continue',
-                                parameters: [choice(name: 'APPROVE_PROD', choices: 'YES\nNO', description: 'Deploy from STAGING to PRODUCTION?')]
-                            if (env.APPROVE_PROD == 'YES'){
-                                env.DPROD = true
-                            } else {
-                                env.DPROD = false
-                            }
-                        }
-                    } catch (error) {
-                        env.DPROD = true
-                        echo 'Timeout has been reached! Deploy to PRODUCTION automatically activated'
-                    }
-                }
 	
 	
- /*post {
-        always {
-	    / Use slackNotifier.groovy from shared library and provide current build result as parameter /   
-            slackNotifier(currentBuild.currentResult)
-          cleanWs()    }    } */
 }
 
 
