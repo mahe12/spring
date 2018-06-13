@@ -4,41 +4,49 @@ def DOCKER_HUB_USER="bathinapullarao"
 def HTTP_PORT="8085"
 
 node {
-
-    stage('declareEnvVariables'){
+	stage('declareEnvVariables')
+	{
         def dockerHome = tool 'myDocker'
         def mavenHome  = tool 'myMaven'
         env.PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
-    }
-stage('gitCheckout') {
-        checkout scm
-    }
-
-stage('Build'){
-        sh "mvn package"
-    }
-  stage('Junit'){
-        try {
-            sh "mvn test"        } catch(error){
-            echo "The Maven can not perform Junit ${error}"
         }
-     }
-  stage('Sonar'){
+stage('gitCheckout') 
+	{
+        checkout scm
+    	}
+stage('Build')
+	{
+        sh "mvn package"
+        }
+  stage('Junit')
+	{
+        try {
+            sh "mvn test" 
+	    } catch(error)
+	    {
+            echo "The Maven can not perform Junit ${error}"
+            }
+        }
+  stage('Sonar')
+	{
         try {
             sh "mvn sonar:sonar"
-        } catch(error){
+            } 
+	catch(error)
+	    {
             echo "The sonar server could not be reached ${error}"
+            }
         }
-     }
-
-    stage("Prune_deleteUnusedImages"){
+   stage("Prune_deleteUnusedImages")
+	{
         imagePrune(CONTAINER_NAME)
-    }
-
-    stage('buildDockerImage'){
+        }
+    stage('buildDockerImage')
+	{
         imageBuild(CONTAINER_NAME, CONTAINER_TAG)
-    }
-    stage('pushtoDockerRegistry'){
+        }
+    stage('pushtoDockerRegistry')
+	{
         withCredentials([usernamePassword(credentialsId: 'dockerHubAccount', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
             pushToImage(CONTAINER_NAME, CONTAINER_TAG, USERNAME, PASSWORD)
         }
@@ -56,24 +64,28 @@ stage('Build'){
 	    slackSend (channel: "#jenkins_notification", color: '#4286f4', message: "Deploy Approval: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.JOB_DISPLAY_URL})")
                 script {
                     try {
-                        timeout(time:30, unit:'MINUTES') {
+                        timeout(time:30, unit:'MINUTES') 
+			    {
                             env.APPROVE_QA = input message: 'Deploy to QA', ok: 'Continue',
                                 parameters: [choice(name: 'APPROVE_QA', choices: 'YES\nNO', description: 'Deploy from QA environment?')]
-                            if (env.APPROVE_QA == 'YES'){
+                            if (env.APPROVE_QA == 'YES')
+				    {
                                 env.DPROD = true
-                            } else {
+                            	    } else 
+				    {
                                 env.DPROD = false
+                                    }
                             }
-                        }
-                    } catch (error) {
+                        } catch (error) 
+			{
                         env.DPROD = true
                         echo 'Timeout has been reached! Deploy to QA automatically activated'
-                    }
-                }
+                        }
+                      }
 	    
     stage('deploy to QA'){
         dipQA(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8086)
-        }
+                         }
     }
     stage('approvalOfUAT'){
     input "Deploy to UAT?"
@@ -82,25 +94,29 @@ stage('Build'){
 	slackSend (channel: "#jenkins_notification", color: '#4286f4', message: "Deploy Approval: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.JOB_DISPLAY_URL})")
                 script {
                     try {
-                        timeout(time:30, unit:'MINUTES') {
+                        timeout(time:30, unit:'MINUTES') 
+			    {
                             env.APPROVE_UAT = input message: 'Deploy to UAT', ok: 'Continue',
                                 parameters: [choice(name: 'APPROVE_UAT', choices: 'YES\nNO', description: 'Deploy to UAT?')]
-                            if (env.APPROVE_UAT == 'YES'){
+                            if (env.APPROVE_UAT == 'YES')
+				    {
                                 env.DPROD = true
-                            } else {
+                            	    } else 
+				    {
                                 env.DPROD = false
+                            	    }
                             }
-                        }
-                    } catch (error) {
+                    	} catch (error) 
+			{
                         env.DPROD = true
                         echo 'Timeout has been reached! Deploy to PRODUCTION automatically activated'
-                    }    
+                    	}    
 	    
 	    
 	    
 	stage('deploy to UAT'){
         dipUAT(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8087)
-        }
+        			}
     }
     stage('approvalOfProd'){
     input "Deploy to Prod?"
@@ -109,27 +125,29 @@ stage('Build'){
 	    slackSend (channel: "#jenkins_notification", color: '#4286f4', message: "Deploy Approval: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.JOB_DISPLAY_URL})")
                 script {
                     try {
-                        timeout(time:30, unit:'MINUTES') {
+                        timeout(time:30, unit:'MINUTES') 
+			    {
                             env.APPROVE_PROD = input message: 'Deploy to Production', ok: 'Continue',
                                 parameters: [choice(name: 'APPROVE_PROD', choices: 'YES\nNO', description: 'Deploy from STAGING to PRODUCTION?')]
-                            if (env.APPROVE_PROD == 'YES'){
+                            if (env.APPROVE_PROD == 'YES')
+				    {
                                 env.DPROD = true
-                            } else {
+                            	    } else 
+				    {
                                 env.DPROD = false
-                            }
-                        }
-                    } catch (error) {
+                            	    }
+                           }
+                    	} catch (error) 
+			{
                         env.DPROD = true
                         echo 'Timeout has been reached! Deploy to PRODUCTION automatically activated'
-                    }
+                        }
     stage('deploy to Prod'){
         dipProd(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8088)
         }
     }
 	
 	
-	
-}
 
 
 
