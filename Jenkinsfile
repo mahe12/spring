@@ -70,9 +70,17 @@ stage('Build')
                         timeout(time:30, unit:'MINUTES') 
 			    {
                             env.APPROVE_QA = input message: 'Deploy to QA', ok: 'Continue',
-                                parameters: [choice(name: 'APPROVE_QA', choices: 'YES\nNO', description: 'Deploy from QA environment?')]
+                                parameters: [choice(name: 'APPROVE_QA', choices: 'YES\nNO', description: 'Deploy to QA environment?')]
                             if (env.APPROVE_QA == 'YES')
 				    {
+					    
+			            stage('deploy to QA')
+					    {
+                                            dipQA(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8086)
+                                            }
+					    
+					    
+					    
                                 env.DPROD = true
                             	    } else 
 				    {
@@ -85,11 +93,7 @@ stage('Build')
                         echo 'Timeout has been reached! Deploy to QA automatically activated'
                           }
                       }
-	    
-    stage('deploy to QA'){
-        dipQA(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8086)
-                         }
-    }
+	  }
     stage('approvalOfUAT'){
     input "Deploy to UAT?"
     }
