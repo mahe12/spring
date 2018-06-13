@@ -19,8 +19,7 @@ stage('Build'){
     }
   stage('Junit'){
         try {
-            sh "mvn test"
-        } catch(error){
+            sh "mvn test"        } catch(error){
             echo "The Maven can not perform Junit ${error}"
         }
      }
@@ -73,15 +72,15 @@ stage('Build'){
     stage('deploy to Prod'){
         dipProd(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8088)
         }
-    }
-    post {
+    }}
+post {
         always {
 	    /* Use slackNotifier.groovy from shared library and provide current build result as parameter */   
             slackNotifier(currentBuild.currentResult)
             cleanWs()
         }
     }
-}
+
 
 
 
