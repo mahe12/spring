@@ -113,7 +113,7 @@ stage('Build')
                             	    } else 
 				    {
                                 env.DPROD = false
-			        echo 'UAT faild"
+			        echo "UAT faild"
                             	    }
                             }
                     	  } catch (error) 
