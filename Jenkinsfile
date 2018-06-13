@@ -57,6 +57,59 @@ stage('Build'){
                 script {
                     try {
                         timeout(time:30, unit:'MINUTES') {
+                            env.APPROVE_QA = input message: 'Deploy to QA', ok: 'Continue',
+                                parameters: [choice(name: 'APPROVE_QA', choices: 'YES\nNO', description: 'Deploy from QA environment?')]
+                            if (env.APPROVE_QA == 'YES'){
+                                env.DPROD = true
+                            } else {
+                                env.DPROD = false
+                            }
+                        }
+                    } catch (error) {
+                        env.DPROD = true
+                        echo 'Timeout has been reached! Deploy to QA automatically activated'
+                    }
+                }
+	    
+    stage('deploy to QA'){
+        dipQA(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8086)
+        }
+    }
+    stage('approvalOfUAT'){
+    input "Deploy to UAT?"
+    }
+    node {
+	slackSend (channel: "#jenkins_notification", color: '#4286f4', message: "Deploy Approval: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.JOB_DISPLAY_URL})")
+                script {
+                    try {
+                        timeout(time:30, unit:'MINUTES') {
+                            env.APPROVE_UAT = input message: 'Deploy to UAT', ok: 'Continue',
+                                parameters: [choice(name: 'APPROVE_UAT', choices: 'YES\nNO', description: 'Deploy to UAT?')]
+                            if (env.APPROVE_UAT == 'YES'){
+                                env.DPROD = true
+                            } else {
+                                env.DPROD = false
+                            }
+                        }
+                    } catch (error) {
+                        env.DPROD = true
+                        echo 'Timeout has been reached! Deploy to PRODUCTION automatically activated'
+                    }    
+	    
+	    
+	    
+	stage('deploy to UAT'){
+        dipUAT(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8087)
+        }
+    }
+    stage('approvalOfProd'){
+    input "Deploy to Prod?"
+    }
+    node {
+	    slackSend (channel: "#jenkins_notification", color: '#4286f4', message: "Deploy Approval: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.JOB_DISPLAY_URL})")
+                script {
+                    try {
+                        timeout(time:30, unit:'MINUTES') {
                             env.APPROVE_PROD = input message: 'Deploy to Production', ok: 'Continue',
                                 parameters: [choice(name: 'APPROVE_PROD', choices: 'YES\nNO', description: 'Deploy from STAGING to PRODUCTION?')]
                             if (env.APPROVE_PROD == 'YES'){
@@ -69,24 +122,6 @@ stage('Build'){
                         env.DPROD = true
                         echo 'Timeout has been reached! Deploy to PRODUCTION automatically activated'
                     }
-                }
-	    
-    stage('deploy to QA'){
-        dipQA(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8086)
-        }
-    }
-    stage('approvalOfUAT'){
-    input "Deploy to UAT?"
-    }
-    node {
-    stage('deploy to UAT'){
-        dipUAT(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8087)
-        }
-    }
-    stage('approvalOfProd'){
-    input "Deploy to Prod?"
-    }
-    node {
     stage('deploy to Prod'){
         dipProd(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8088)
         }
