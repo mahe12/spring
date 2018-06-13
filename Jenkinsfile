@@ -74,11 +74,31 @@ stage('Build'){
         dipProd(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8088)
         }
     }
- post {
+	
+	slackSend (channel: "#jenkins_notification", color: '#4286f4', message: "Deploy Approval: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.JOB_DISPLAY_URL})")
+                script {
+                    try {
+                        timeout(time:30, unit:'MINUTES') {
+                            env.APPROVE_PROD = input message: 'Deploy to Production', ok: 'Continue',
+                                parameters: [choice(name: 'APPROVE_PROD', choices: 'YES\nNO', description: 'Deploy from STAGING to PRODUCTION?')]
+                            if (env.APPROVE_PROD == 'YES'){
+                                env.DPROD = true
+                            } else {
+                                env.DPROD = false
+                            }
+                        }
+                    } catch (error) {
+                        env.DPROD = true
+                        echo 'Timeout has been reached! Deploy to PRODUCTION automatically activated'
+                    }
+                }
+	
+	
+ /*post {
         always {
-	    /* Use slackNotifier.groovy from shared library and provide current build result as parameter */   
+	    / Use slackNotifier.groovy from shared library and provide current build result as parameter /   
             slackNotifier(currentBuild.currentResult)
-          cleanWs()    }    }
+          cleanWs()    }    } */
 }
 
 
