@@ -47,7 +47,39 @@ stage('Build'){
     stage('Run App'){
         runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT)
     }
+/*
+    stage('Deploy approval to QA'){
+    input "Deploy to QA?"
     }
+    node {
+    stage('deploy to QA'){
+        sh "docker pull $dockerHubUser/$containerName"
+        sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
+        echo "Application started on port: ${httpPort} (http)"
+        }
+    }
+    stage('Deploy approval to UAT'){
+    input "Deploy to UAT?"
+    }
+    node {
+    stage('deploy to UAT'){
+        sh "docker pull $dockerHubUser/$containerName"
+        sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
+        echo "Application started on port: ${httpPort} (http)"
+        }
+    }
+    stage('Deploy approval to Production'){
+    input "Deploy to Production?"
+        }
+    node {
+    stage('deploy to Production'){
+        sh "docker pull $dockerHubUser/$containerName"
+        sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
+        echo "Application started on port: ${httpPort} (http)"
+        }
+    }
+*/
+}
     def imagePrune(containerName){
     try {
         sh "docker image prune -f"
