@@ -53,14 +53,14 @@ stage('Build')
             pushToImage(CONTAINER_NAME, CONTAINER_TAG, USERNAME, PASSWORD)
                 }
 	}	
-}
+
 
     stage('Run App'){
         runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT)
     }
 
     
-    stage('approvalOfQA'){
+    stage('approvalofQA'){
     input "Deploy to QA?"
     }
     node {
@@ -200,3 +200,4 @@ def dipProd(containerName, tag, dockerHubUser, httpPort){
     echo "Application started on port: ${httpPort} (http)"
 }
 
+}
