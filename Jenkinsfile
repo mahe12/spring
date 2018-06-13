@@ -74,13 +74,11 @@ stage('Build'){
         dipProd(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8088)
         }
     }
-post {
-        always {
+// post {
+//        always {
 	    /* Use slackNotifier.groovy from shared library and provide current build result as parameter */   
-            slackNotifier(currentBuild.currentResult)
-            cleanWs()
-        }
-    }
+//            slackNotifier(currentBuild.currentResult)
+  //          cleanWs()    }    }
 }
 
 
