@@ -22,7 +22,6 @@ stage('Build'){
             sh "mvn test"
         } catch(error){
             echo "The Maven can not perform Junit ${error}"
-
         }
      }
   stage('Sonar'){
@@ -50,38 +49,33 @@ stage('Build'){
         runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT)
     }
 
-    /*
-    stage('Deploy approval to QA'){
+    
+    stage('approvalOfQA'){
     input "Deploy to QA?"
     }
     node {
     stage('deploy to QA'){
-        sh "docker pull $dockerHubUser/$containerName"
-        sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
-        echo "Application started on port: ${httpPort} (http)"
+        dipQA(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8086)
         }
     }
-    stage('Deploy approval to UAT'){
+    stage('approvalOfUAT'){
     input "Deploy to UAT?"
     }
     node {
     stage('deploy to UAT'){
-        sh "docker pull $dockerHubUser/$containerName"
-        sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
-        echo "Application started on port: ${httpPort} (http)"
+        dipUAT(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8087)
         }
     }
-    stage('Deploy approval to Production'){
-    input "Deploy to Production?"
-        }
+    stage('approvalOfProd'){
+    input "Deploy to Prod?"
+    }
     node {
-    stage('deploy to Production'){
-        sh "docker pull $dockerHubUser/$containerName"
-        sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
-        echo "Application started on port: ${httpPort} (http)"
+    stage('deploy to Prod'){
+        dipProd(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8088)
         }
     }
-*/
+
+    
 }
     def imagePrune(containerName){
     try {
@@ -103,6 +97,24 @@ def pushToImage(containerName, tag, dockerUser, dockerPassword){
 }
 
 def runApp(containerName, tag, dockerHubUser, httpPort){
+    sh "docker pull $dockerHubUser/$containerName"
+    sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
+    echo "Application started on port: ${httpPort} (http)"
+}
+
+
+
+def dipQA(containerName, tag, dockerHubUser, httpPort){
+    sh "docker pull $dockerHubUser/$containerName"
+    sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
+    echo "Application started on port: ${httpPort} (http)"
+}
+def dipUAT(containerName, tag, dockerHubUser, httpPort){
+    sh "docker pull $dockerHubUser/$containerName"
+    sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
+    echo "Application started on port: ${httpPort} (http)"
+}
+def dipProd(containerName, tag, dockerHubUser, httpPort){
     sh "docker pull $dockerHubUser/$containerName"
     sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
     echo "Application started on port: ${httpPort} (http)"
