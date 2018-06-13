@@ -152,12 +152,12 @@ stage('Build')
         dipProd(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8088)
         }
     }
+}	
 	
-	
 
 
 
-    def imagePrune(containerName){
+def imagePrune(containerName){
     try {
         sh "docker image prune -f"
         sh "docker stop $containerName"
@@ -200,4 +200,3 @@ def dipProd(containerName, tag, dockerHubUser, httpPort){
     echo "Application started on port: ${httpPort} (http)"
 }
 
-}
