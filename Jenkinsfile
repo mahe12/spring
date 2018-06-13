@@ -3,7 +3,8 @@ def CONTAINER_TAG="latest"
 def DOCKER_HUB_USER="bathinapullarao"
 def HTTP_PORT="8085"
 
-node {
+node 
+{
 	stage('declareEnvVariables')
 	{
         def dockerHome = tool 'myDocker'
@@ -50,7 +51,7 @@ stage('Build')
         withCredentials([usernamePassword(credentialsId: 'dockerHubAccount', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
             pushToImage(CONTAINER_NAME, CONTAINER_TAG, USERNAME, PASSWORD)
         }
-    }
+}
 
     stage('Run App'){
         runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT)
@@ -63,7 +64,7 @@ stage('Build')
     node {
 	    slackSend (channel: "#jenkins_notification", color: '#4286f4', message: "Deploy Approval: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.JOB_DISPLAY_URL})")
                 script {
-                    try {
+                    try  {
                         timeout(time:30, unit:'MINUTES') 
 			    {
                             env.APPROVE_QA = input message: 'Deploy to QA', ok: 'Continue',
@@ -76,11 +77,11 @@ stage('Build')
                                 env.DPROD = false
                                     }
                             }
-                        } catch (error) 
-			{
+                          } catch (error) 
+			  {
                         env.DPROD = true
                         echo 'Timeout has been reached! Deploy to QA automatically activated'
-                        }
+                          }
                       }
 	    
     stage('deploy to QA'){
@@ -93,7 +94,7 @@ stage('Build')
     node {
 	slackSend (channel: "#jenkins_notification", color: '#4286f4', message: "Deploy Approval: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.JOB_DISPLAY_URL})")
                 script {
-                    try {
+                    try  {
                         timeout(time:30, unit:'MINUTES') 
 			    {
                             env.APPROVE_UAT = input message: 'Deploy to UAT', ok: 'Continue',
@@ -106,11 +107,12 @@ stage('Build')
                                 env.DPROD = false
                             	    }
                             }
-                    	} catch (error) 
+                    	  } catch (error) 
 			{
                         env.DPROD = true
                         echo 'Timeout has been reached! Deploy to PRODUCTION automatically activated'
-                    	}    
+                    	}
+		      }
 	    
 	    
 	    
@@ -124,7 +126,7 @@ stage('Build')
     node {
 	    slackSend (channel: "#jenkins_notification", color: '#4286f4', message: "Deploy Approval: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.JOB_DISPLAY_URL})")
                 script {
-                    try {
+                    try  {
                         timeout(time:30, unit:'MINUTES') 
 			    {
                             env.APPROVE_PROD = input message: 'Deploy to Production', ok: 'Continue',
@@ -137,12 +139,13 @@ stage('Build')
 				    {
                                 env.DPROD = false
                             	    }
-                           }
-                    	} catch (error) 
-			{
+                             }
+                    	   } catch (error) 
+			   {
                         env.DPROD = true
                         echo 'Timeout has been reached! Deploy to PRODUCTION automatically activated'
-                        }
+                           }
+		       }
     stage('deploy to Prod'){
         dipProd(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, 8088)
         }
@@ -194,4 +197,4 @@ def dipProd(containerName, tag, dockerHubUser, httpPort){
     sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
     echo "Application started on port: ${httpPort} (http)"
 }
-    }
+
