@@ -11,8 +11,7 @@ VOLUME /tmp
 EXPOSE 8085
 
 # The application's jar file
-//COPY /target/karafbootrest-0.0.1-SNAPSHOT.jar //
-COPY /var/lib/jenkins/workspace/cicd/target/karafbootrest-0.0.1-SNAPSHOT.jar
+COPY /target/karafbootrest-0.0.1-SNAPSHOT.jar //
 # The application properties
 #COPY /var/lib/jenkins/workspace/Test/src/main/resources/application.yml //
 
