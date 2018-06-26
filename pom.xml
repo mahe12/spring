@@ -48,7 +48,7 @@
 		<plugins>
      
 		<plugin>
-  		<groupid>org.jacoco</groupid>
+  		<groupid>com.karafboot.config</groupid>
   		<artifactid>jacoco-maven-plugin</artifactid>
   		<version>0.5.5.201112152213</version>
 		</plugin>
