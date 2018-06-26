@@ -47,7 +47,11 @@
 	<build>
 		<plugins>
      
-
+		<plugin>
+  		<groupid>org.jacoco</groupid>
+  		<artifactid>jacoco-maven-plugin</artifactid>
+  		<version>0.5.5.201112152213</version>
+		</plugin>
 			
 			
 		</plugins>
