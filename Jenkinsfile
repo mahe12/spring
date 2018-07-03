@@ -15,7 +15,7 @@ stage('gitCheckout')
 	{
         checkout scm
     	}
-stage('Build')
+/*stage('Build')
 	{
         sh "mvn package"
         }
@@ -27,11 +27,11 @@ stage('Build')
 	    {
             echo "The Maven can not perform Junit ${error}"
             }
-        }
+        }  */
   stage('Sonar')
 	{
         try {
-            sh "mvn sonar:sonar"
+            sh "mvn clean install sonar:sonar -P sonar"
             } 
 	catch(error)
 	    {
