@@ -28,7 +28,7 @@ stage('gitCheckout')
             echo "The Maven can not perform Junit ${error}"
             }
         }  */
-  stage('Sonar')
+ /* stage('Sonar')
 	{
         try {
             sh "mvn clean install sonar:sonar -P sonar"
@@ -37,11 +37,11 @@ stage('gitCheckout')
 	    {
             echo "The sonar server could not be reached ${error}"
             }
-        }
+        }  
    stage("Prune_deleteUnusedImages")
 	{
         imagePrune(CONTAINER_NAME)
-        }
+        } */
     stage('buildDockerImage')
 	{
         imageBuild(CONTAINER_NAME, CONTAINER_TAG)
