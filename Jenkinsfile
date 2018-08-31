@@ -1,6 +1,6 @@
 def CONTAINER_NAME="jenkins-pipelin"
 def CONTAINER_TAG="latest"
-def DOCKER_HUB_USER="bathinapullarao"
+def DOCKER_HUB_USER="machoppa"
 def HTTP_PORT="8087"
 
 node 
