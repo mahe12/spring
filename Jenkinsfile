@@ -15,7 +15,7 @@ stage('gitCheckout')
 	{
         checkout scm
     	}
-/*stage('Build')
+stage('Build')
 	{
         sh "mvn package"
         }
@@ -27,8 +27,8 @@ stage('gitCheckout')
 	    {
             echo "The Maven can not perform Junit ${error}"
             }
-        }  */
- /* stage('Sonar')
+        }  
+	stage('Sonar')
 	{
         try {
             sh "mvn clean install sonar:sonar -P sonar"
@@ -41,7 +41,7 @@ stage('gitCheckout')
    stage("Prune_deleteUnusedImages")
 	{
         imagePrune(CONTAINER_NAME)
-        } */
+        } 
     stage('buildDockerImage')
 	{
         imageBuild(CONTAINER_NAME, CONTAINER_TAG)
