@@ -29,7 +29,7 @@
 				<sonar.projectKey>${project.artifactId}</sonar.projectKey>
 				<sonar.projectName>${project.artifactId}</sonar.projectName>
 				<sonar.projectVersion>${project.version}</sonar.projectVersion>
-				<sonar.host.url>http://18.217.27.243:9000/</sonar.host.url>
+				<sonar.host.url>http://18.191.27.35:9000/</sonar.host.url>
 				<sonar.verbose>true</sonar.verbose>
 				<sonar.showProfiling>true</sonar.showProfiling>
 				<!-- 
